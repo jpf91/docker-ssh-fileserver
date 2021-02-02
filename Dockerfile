@@ -11,14 +11,20 @@ RUN microdnf install borgbackup rsync openssh-clients openssh-server \
     microdnf install authselect && \
     authselect select sssd --force && \
     microdnf remove authselect authselect-libs && \
-    microdnf clean all && \
-    sed -i 's/passwd:     sss files systemd/passwd: sss files altfiles systemd/g' /etc/nsswitch.conf && \
+    microdnf clean all
+
+# * opensshd needs a local sshd user. On coreos, /etc/passwd is split into /etc/passwd and /lib/passwd and the sshd user is in /lib/passwd.
+#   Because of that, if we mount /etc/passwd from coreos, there's no local sshd user and opensshd won't start.
+#   As a workaround, configure nss-altfiles to look into /lib/passwd in the container and backup the ssh user there.
+# * The mounted /etc/kerberos file might include /var/lib/sss/pubconf/krb5.include.d (sssd). We only need basic config
+#   in the container, so we can ignore this. But the directory must exist or the krb5-libs will complain.
+RUN sed -i 's/passwd:     sss files systemd/passwd: sss files altfiles systemd/g' /etc/nsswitch.conf && \
     sed -i 's/group:      sss files systemd/group: sss files altfiles systemd/g' /etc/nsswitch.conf && \
     sed -i 's/shadow:     files/shadow:     files altfiles/g' /etc/nsswitch.conf && \
     cp /etc/passwd /lib/passwd && \
     cp /etc/group /lib/group && \
     cp /etc/shadow /lib/shadow && \
     mkdir -p /var/lib/sss/pubconf/krb5.include.d && \
-    mkdir -p /etc/krb5.conf.d/
+    mkdir -p /etc/krb5.conf.d
 
 ENTRYPOINT ["/usr/sbin/sshd", "-De"]
