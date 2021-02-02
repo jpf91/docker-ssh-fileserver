@@ -11,6 +11,8 @@ RUN microdnf install borgbackup rsync openssh-clients openssh-server \
     microdnf install authselect && \
     authselect select sssd --force && \
     microdnf remove authselect authselect-libs && \
-    microdnf clean all
+    microdnf clean all && \
+    mkdir -p /var/lib/sss/pubconf/krb5.include.d && \
+    mkdir -p /etc/krb5.conf.d/
 
 ENTRYPOINT ["/usr/sbin/sshd", "-De"]
