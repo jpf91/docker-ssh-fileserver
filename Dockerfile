@@ -6,7 +6,7 @@ FROM registry.fedoraproject.org/fedora-minimal:33
 # https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/using_containerized_identity_management_services/deploying-sssd-containers-with-different-configurations
 # https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html-single/configuring_authentication_and_authorization_in_rhel/index
 RUN microdnf install borgbackup rsync openssh-clients openssh-server \
-        bash zsh findutils hostname \
+        bash zsh findutils hostname iputils \
         sssd-client krb5-workstation nss-altfiles && \
     microdnf install authselect && \
     authselect select sssd --force && \
