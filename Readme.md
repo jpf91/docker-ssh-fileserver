@@ -32,6 +32,9 @@ HostKey /etc/ssh/keys/ssh_host_ecdsa_key
 HostKey /etc/ssh/keys/ssh_host_ed25519_key
 
 Subsystem	sftp	internal-sftp
+
+UsePAM yes
+PasswordAuthentication yes
 ```
 
 ### Running using podman cli
@@ -127,4 +130,4 @@ podman build \
 
 ## Versions
 
-* **07.02.21:** - Intial Release.
+* **07.02.21:** - Initial Release.
